@@ -59,9 +59,9 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>cd /Users/mjoakes/Scripts/WindowHalving
+					<string>cd /Users/mjoakes/Sources/WindowHalving
 
-/opt/local/bin/python get_window_and_resize.py -1</string>
+/opt/local/bin/python get_window_and_resize.py -1 1</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
