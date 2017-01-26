@@ -99,7 +99,6 @@ def doit(direction=-1, resize=1):
     screens = NSScreen.screens()
     screenlist = coordinate_screens([frame_to_bounds(s.frame()) for s in screens])
     screenid = which_screen_contains_window(screenlist, win_bounds)
-    print('window on screen', screens[screenid].frame())
     screen_bounds = screenlist[screenid]
     screen_size = [
         screen_bounds[n+2] - screen_bounds[n] for n in range(len(screen_bounds)) if
@@ -119,7 +118,7 @@ def doit(direction=-1, resize=1):
     elif direction > 0:
         ox, oy = screen_bounds[0] + (screen_size[0] - dw), screen_bounds[1]
     else:
-        dw = screen_size[1]
+        dw = screen_size[0]
         ox, oy = screen_bounds[0:2]
     newbounds = (ox, oy, ox + dw, oy + dh)
     thwin.bounds.set(newbounds)
