@@ -95,48 +95,35 @@ def which_screen_contains_window(screenlist, window_bounds):
 
 def doit(direction=-1, resize=1):
     thwin = get_active_window()
-    bounds = thwin.bounds()
+    win_bounds = thwin.bounds()
     screens = NSScreen.screens()
     screenlist = coordinate_screens([frame_to_bounds(s.frame()) for s in screens])
-    screenid = which_screen_contains_window(screenlist, bounds)
+    screenid = which_screen_contains_window(screenlist, win_bounds)
     print('window on screen', screens[screenid].frame())
-
-    """
-    print('sss', sorigin, ssize)
-    for t in dir(NSScreen):
-        print(' ', t)
+    screen_bounds = screenlist[screenid]
+    screen_size = [
+        screen_bounds[n+2] - screen_bounds[n] for n in range(len(screen_bounds)) if
+        n < len(screen_bounds) - 2
+    ]
+    window_size = [
+        win_bounds[n+2] - win_bounds[n] for n in range(len(win_bounds)) if
+        n < len(win_bounds) - 2
+    ]
     if resize==1:
-        dw = ssize[1] / 2.0
+        dw = screen_size[0] / 2.0
     else:
-        dw = winsize[0]
-    dh = ssize[1]
+        dw = window_size[0]
+    dh = screen_size[1]
     if direction < 0:
-        # thwin.position.set([sorigin.x, 0])
-        ox, oy = sorigin[0], sorigin[1]
+        ox, oy = screen_bounds[0:2]
     elif direction > 0:
-        # thwin.position.set([sorigin.x + dw, 0])
-        ox, oy = sorigin[0] + \
-             (ssize[1] - dw), \
-             sorigin[1]
+        ox, oy = screen_bounds[0] + (screen_size[0] - dw), screen_bounds[1]
     else:
-        dw = ssize[1]
-        ox, oy = sorigin[0], sorigin[1]
-    #thwin.size.set([dw, dh])
-    newbounds = [
-        ox,
-        oy,
-        ox + dw,
-        oy + dh
-        ]
-    print('newb', newbounds)
+        dw = screen_size[1]
+        ox, oy = screen_bounds[0:2]
+    newbounds = (ox, oy, ox + dw, oy + dh)
     thwin.bounds.set(newbounds)
-"""
-    """
-    try:
-    except Exception as e:
-    with open('/tmp/wrs.log', 'w') as log:
-        log.write(str(e))
-       """     
+
 if __name__ == '__main__':
     doit(
         *[int(n) for n in sys.argv[1:]]
