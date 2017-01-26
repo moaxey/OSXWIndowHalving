@@ -19,12 +19,12 @@ def get_screens():
     return NSScreen.screens()
 
 def frame_to_bounds(frame):
-    return (
+    return [
         frame.origin.x,
         frame.origin.y,
         frame.origin.x + frame.size.width,
         frame.origin.y + frame.size.height,
-    )
+    ]
 
 def get_windows_screen(bounds):
     centre = (
@@ -71,7 +71,7 @@ def screenlist_to_desktop(screenlist):
     desktop_bounds[3] += shifty
     return desktop_bounds
     ### TODO: apply shiftx and shifty values to screen list
-    
+
 def coordinate_screens(screenlist):
     zeroscreen = screenlist.pop(0)
     # compare each screen to zero screen
@@ -91,9 +91,16 @@ def coordinate_screens(screenlist):
             s[1] = 0.0
             s[3] = sh
         elif s[0] < 0 and s[3] == zeroscreen[3]:
-            print('zeroscreen is right')
+            #print('zeroscreen is right')
+            zeroscreen[0] += sw
+            zeroscreen[2] += sw
+            s[0] += sw
+            s[2] += sw
+            s[3] += abs(s[1])
+            s[1] += abs(s[1])
         elif s[0] == zeroscreen[2]:
-            print('zeroscreen is left')
+            # print('zeroscreen is left')
+            s[1] += abs(s[1])
     screenlist.insert(0, zeroscreen)
     return screenlist
 
@@ -113,8 +120,9 @@ def which_screen_contains_window(screenlist, window_bounds):
     centery = winpos[1] + winsize[1] / 2.0
     screencount = 0
     for screen in screenlist:
+        print('sss', screen, centerx, centery)
         if screen[0] < centerx < screen[2] and \
-           screen[0] < centery < screen[3]:
+           screen[1] < centery < screen[3]:
             break
         screencount += 1
     return screencount if screencount < len(screenlist) else -1
@@ -132,7 +140,10 @@ def doit(direction=-1, resize=1):
     """
     screens = NSScreen.screens()
     screenlist = [frame_to_bounds(s.frame()) for s in screens]
-    screenid = which_screen_contains__window(screenlist, window)
+    print('scr', screenlist)
+    print('bou', bounds)
+    screenid = which_screen_contains_window(screenlist, bounds)
+    print('window on screen', screenid)
     """     for s in 
         fbounds = 
         print(s, fbounds, NSScreen._isZeroScreen(s), NSScreen._menuBarHeight(s))
@@ -145,8 +156,8 @@ Screens must be aligned with each other.
 
 
 """
-    print('sss', sorigin, ssize)
     """
+    print('sss', sorigin, ssize)
     for t in dir(NSScreen):
         print(' ', t)
     if resize==1:

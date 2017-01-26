@@ -10,6 +10,22 @@ from get_window_and_resize import (
     coordinate_screens,
 )
 
+@pytest.fixture
+def screen_zero_above():
+    return [[0.0, 0.0, 1440.0, 900.0], [0.0, -1200.0, 1920.0, 0.0]]
+
+@pytest.fixture
+def screen_zero_below():
+    return [[0.0, 0.0, 1440.0, 900.0], [0.0, 900.0, 1920.0, 2100.0]]
+
+@pytest.fixture
+def screen_zero_right():
+    return [[0.0, 0.0, 1440.0, 900.0], [-1920.0, -300.0, 0.0, 900.0]]
+
+@pytest.fixture
+def screen_zero_left():
+    return [[0.0, 0.0, 1440.0, 900.0], [1440.0, -300.0, 3360.0, 900.0]]
+
 def test_get_active_window():
     win = get_active_window()
     assert type(win).__name__ == 'Reference', 'windows not an applescript ref'
@@ -31,19 +47,23 @@ def test_get_screens():
     assert type(frame).__name__ == 'NSRect', 'frame() does not return NSRect'
 
 def test_desktop_bounds():
-    s0_above = [[0.0, 0.0, 1440.0, 900.0], [0.0, -1200.0, 1920.0, 0.0]]
-    dbounds = screenlist_to_desktop(s0_above)
+    dbounds = screenlist_to_desktop(screen_zero_above())
     assert dbounds == [0, 0.0, 1920.0, 2100.0]
 
 def test_coordinate_screens():
-    s0_above = [[0.0, 0.0, 1440.0, 900.0], [0.0, -1200.0, 1920.0, 0.0]]
-    csl = coordinate_screens(s0_above)
+    csl = coordinate_screens(screen_zero_above())
     assert csl == [[0.0, 0.0, 1440.0, 900.0], [0.0, 900.0, 1920.0, 2100.0]], \
         'screens not coordinated when zeroscreen is above'
-    s0_below = [[0.0, 0.0, 1440.0, 900.0], [0.0, 900.0, 1920.0, 2100.0]]
-    csl = coordinate_screens(s0_below)
-    assert csl == [[0.0, 900, 1440.0, 2100.0], [0.0, 0.0, 1920.0, 1200.0]], \
+    csl = coordinate_screens(screen_zero_below())
+    assert csl == [[0.0, 900.0, 1440.0, 2100.0], [0.0, 0.0, 1920.0, 1200.0]], \
         'screens not coordinated when zeroscreen is below'
+    csl = coordinate_screens(screen_zero_right())
+    assert csl == [[1920.0, 0.0, 3360.0, 900.0], [0.0, 0.0, 1920.0, 1200.0]], \
+        'screens not coordinated when zeroscreen is right'
+    csl = coordinate_screens(screen_zero_left())
+    assert csl == [[0.0, 0.0, 1440.0, 900.0], [1440.0, 0.0, 3360.0, 1200.0]], \
+        'screens not coordinated when zeroscreen is left'
+
 """ 
 zeroscreen     screens()                                           window bounds screen 2
 above [[0.0, 0.0, 1440.0, 900.0], [0.0, -1200.0, 1920.0, 0.0]]     (523, 1499, 1116, 2038)
@@ -70,10 +90,10 @@ def test_get_windows_screen():
         assert type(frame).__name__ == 'NSRect', 'frame() does not return NSRect'
         print('frame', frame)
 
-def test_which_screen_contains__window():
-    s0_above = [[0.0, 0.0, 1440.0, 900.0], [0.0, -1200.0, 1920.0, 0.0]]
+def test_which_screen_contains_window():
+    s0_above = screen_zero_above()
     s0_win = (0, 23, 100, 100)
-    s1_win = (523, 1499, 1116, 2038)
+    s1_win = (423, -618, 1024, -90)
     sid = which_screen_contains_window(s0_above, s0_win)
     assert sid == 0, 'window should be on screen 0'
     sid = which_screen_contains_window(s0_above, s1_win)
