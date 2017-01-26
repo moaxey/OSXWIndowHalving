@@ -13,7 +13,20 @@ def get_active_window():
     thapp = sev.application_processes[
         appscript.its.frontmost == True
     ].application_processes[1].name.get()
-    return appscript.app(thapp).windows[1].get()
+    app_translations = {
+        'soffice': 'LibreOffice'
+    }
+    if thapp in app_translations.keys():
+        thapp = app_translations[thapp]
+    app = appscript.app(thapp)
+    if hasattr(app, 'windows'):
+        return app.windows[1].get()
+    else:
+        raise Exception(
+            '{} does not reference windows to applescript'.format(
+                thapp
+            )
+        )
 
 def get_screens():
     return NSScreen.screens()
@@ -124,6 +137,11 @@ def doit(direction=-1, resize=1):
     thwin.bounds.set(newbounds)
 
 if __name__ == '__main__':
-    doit(
-        *[int(n) for n in sys.argv[1:]]
-    )
+    try:
+        doit(
+            *[int(n) for n in sys.argv[1:]]
+        )
+    except Exception as e:
+        with open('/tmp/wrs.log', 'a') as log:
+            log.write("{}\n".format(e))
+        raise e
