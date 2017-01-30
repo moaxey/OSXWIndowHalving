@@ -133,7 +133,7 @@ def doit(direction=-1, resize=1):
     else:
         dw = screen_size[0]
         ox, oy = screen_bounds[0:2]
-    newbounds = (ox, oy, ox + dw, oy + dh)
+    newbounds = [int(n) for n in ox, oy, ox + dw, oy + dh]
     thwin.bounds.set(newbounds)
 
 if __name__ == '__main__':
