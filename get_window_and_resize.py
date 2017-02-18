@@ -3,6 +3,7 @@
 from AppKit import NSScreen
 import appscript
 import sys
+import os
 
 """
 Resize the window to the left or right half of the screen its on
@@ -137,6 +138,18 @@ def doit(direction=-1, resize=1):
     thwin.bounds.set(newbounds)
 
 if __name__ == '__main__':
+    if len(sys.argv[1:]) < 2:
+        print("""Usage:
+python {} [-1,1] [-1,0,1]
+1. First argument
+  -1: move window to left
+  1: move window to right
+2. Second argument 
+  1: resizes of window to half screen
+  0: resizes window to full screen
+  -1: does not resize window
+
+""".format(os.path.basename(__file__)))
     try:
         doit(
             *[int(n) for n in sys.argv[1:]]
